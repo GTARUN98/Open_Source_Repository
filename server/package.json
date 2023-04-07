@@ -1,0 +1,39 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@babel/core": "^7.21.3",
+    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.1",
+    "cids": "^1.1.9",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "ethers": "^6.2.3",
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "ipfs-core": "^0.18.0",
+    "ipfs-http-client": "^50.1.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.14.0",
+    "mongoose": "^6.10.1",
+    "multer": "^1.4.5-lts.1",
+    "multiformats": "^11.0.2",
+    "node-fetch": "^3.3.1",
+    "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.21",
+    "owasp-dependency-check": "^0.0.21",
+    "path": "^0.12.7",
+    "react-router-dom": "^6.4.3",
+    "web3": "^1.8.2"
+  }
+}
