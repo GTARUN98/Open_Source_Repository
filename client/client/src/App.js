@@ -5,7 +5,7 @@ import { BrowserRouter ,Routes, Route } from "react-router-dom";
 
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import Login from "./components/Login";
+import Login from "./components/Login";// login componet for user ...........
 import SignUp from "./components/SignUp";
 import HomePage from "./components/HomePage";
 import ForgotPassword from "./components/ForgotPassword";
