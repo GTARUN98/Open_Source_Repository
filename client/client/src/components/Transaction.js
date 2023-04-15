@@ -4,13 +4,13 @@ import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
 import { Box,Grid,Container,Typography,TextField,Button } from "@mui/material";
 const {abi} = require("../contracts_abi/Blockchain.json")
-require("dotenv").config();
+require("dotenv").config({path: "D:/Tarun/Mern stack/Mini/client/client/.env"});
 let Web3 = require("web3")
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
-  /*try {
+  try {
     if (!window.ethereum)
       throw new Error("No crypto wallet found. Please install it.");
-
+    console.log("start payment is called")
     await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -19,17 +19,25 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
       to: addr,
       value: ethers.utils.parseEther(ether)
     });
+    // const tx = {hash: '0x31c6924d7ee0c6b813a25a6e45cd9b336326853233b097bbeab4241b6224b785', type: 2, accessList: null, blockHash: null, blockNumber: null}
     console.log({ ether, addr });
-    console.log("tx", tx);
-    setTxs([tx]);
+    console.log("tx", tx.hash);
+    await setTxs(tx.hash);
+    return tx.hash
   } catch (err) {
     setError(err.message);
-  }*/
+  }
 };
 
+
+async function stringToBytes32(str) {
+  const hash = await ethers.utils.keccak256(str);
+  const bytes32 = await ethers.utils.arrayify(hash);
+  return bytes32;
+}
 export default function Transaction() {
   const [error, setError] = useState();
-  const [txs, setTxs] = useState([]);
+  const [txs, setTxs] = useState();
   const component = localStorage.getItem("component")
   const domain = localStorage.getItem("domain")
   const language = localStorage.getItem("language")
@@ -37,42 +45,48 @@ export default function Transaction() {
   const description = localStorage.getItem("description")
   const date = localStorage.getItem("date")
   const operatingSystem = localStorage.getItem("operatingSystem")
-  const fileHash = localStorage.getItem("fileHash")
-
+  let fileHash = localStorage.getItem("fileHash")
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError();
-    await startPayment({
+    fileHash =  await stringToBytes32( Buffer.from(fileHash, 'utf8'))
+    console.log(`fileHash`,fileHash)
+    
+    const trans = await startPayment({
       setError,
       setTxs,
-      ether: "0", 
-      addr: process.env.META_MASK_ID//reciever
+      ether: "0.00000005", 
+      addr: process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS//reciever i.e the contract adderess
     });
-    const transactionHash = txs[0]//this wil be afterwards removed coz i just want to see wheather this api works
+    console.log(`tx.hash is `,trans)
+    // const transactionHash = txs[0]//this wil be afterwards removed coz i just want to see wheather this api works
+    let transactionHash = await stringToBytes32(trans)//this wil be afterwards removed coz i just want to see wheather this api works
+    console.log('transaction hash in bytes32 is ',transactionHash)
     // const transactionHash = localStorage.getItem("transactionHash")
-    console.log(`transactionHash obtained is `,transactionHash)
-    /*const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS,abi,provider)
-    console.log(`contract is `,contract.functions)
-    const block = await contract.getSize();
-    console.log(`block is `,block) 
-    console.log(`block no is `,blockNo)
-    const signer = provider.getSigner()
-    const newContract = new ethers.Contract(process.env.CONTRACT_ADDRESS,abi,signer)
-    const addBlockResponse = await newContract.makeBlock(functionality,operatingSystem,language,domain,component,date,fileHash,
-      transactionHash)*/
-      let web3 = new Web3(new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545"))
-      let contract = new web3.eth.Contract(abi,process.env.CONTRACT_ADDRESS)
-      // let contract = new web3.eth.Contract(abi,process.env.CONTRACT_ADDRESS)
+    await window.ethereum.send("eth_requestAccounts");
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+      console.log(provider)
+      // const provider = new ethers.providers.AlchemyProvider("ZDD-ekxQior2CBbHU9Oyym1yKDE85aSc")
+      console.log(`abi is ${abi}`)
+      const contract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS,abi,provider)
       console.log(`contract is `,contract)
-      const addBlockDetails = await contract.methods.makeBlock(functionality,operatingSystem,language,domain,component,date,fileHash,transactionHash)
-      const addBlockResponse =  await contract.methods.getSize()
+      let blockNo = await contract.getSize();
+      blockNo = blockNo.toString()
       
-      const blockNo = await addBlockResponse.call();
-    console.log(`addBlockDetails is `,addBlockDetails)
-   console.log(`addBlockResponse : `,addBlockResponse)
-   console.log(`block No is `,blockNo)
-    const res = await fetch("/addBlockDetails", {
+      
+      console.log(`file hash is bytes is`,fileHash);
+      console.log("block no is",blockNo)
+     
+      const signer = provider.getSigner()
+      console.log(`signer is `,signer)
+      // console.log(functionality,operatingSystem,language,domain,component,date,fileHash,transactionHash)
+
+      const myContract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS,abi,signer);
+      console.log(`myContract is`,myContract)
+      const tx = await myContract.makeBlock(functionality,operatingSystem,language,domain,component,date,fileHash,transactionHash);
+  
+      console.log(`tx is ${tx}`)
+      const res = await fetch("/addBlockDetails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,12 +125,14 @@ export default function Transaction() {
     <Typography>To make a block and contribute to the opensource you need to make a transaction in ethers to make yourself a block </Typography>
     <Typography>1. You need to have an metamask wallet in your browser with sufficint amount of ethers</Typography>
     <Typography>2. Use Test Ethers as it is just a testing website(dont't use mainnet wallet)</Typography>
-    <Typography>3. A Payment of {process.env.BLOCK_COST} + gas price is required to make a block</Typography>
+    <Typography>3. A Payment of {process.env.REACT_APP_BLOCK_COST} + gas price is required to make a block</Typography>
     <Typography>4. !!Gas prices may change time to time so we are'nt responsible</Typography>
     <Button variant="contained"
           fullWidth
           onClick={handleSubmit}
           style={{marginTop:"15px",marginBottom:"3px"}}>Make Payment</Button>
+     {/*<ErrorMessage message={error} />
+      <TxList txs={txs} />*/}
     </Container>
     </Box>
     

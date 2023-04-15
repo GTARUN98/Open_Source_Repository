@@ -13,9 +13,12 @@ import ContactPage from "./components/ContactPage";
 import Check_OTP from "./components/Check_OTP";
 import ChangePassword from "./components/ChangePassword";
 import AllRepositories from "./components/AllRepositories";
+import YourRepositories from "./components/YourRepositories";
 import BlockDetails from "./components/BlockDetails"
 import Transaction from "./components/Transaction"
+import TransactionsMade from "./components/TransactionsMade";
 
+import Error_ProfilePage from "./components/Error_ProfilePage";
 function App() {
   return (
     <BrowserRouter>
@@ -28,9 +31,13 @@ function App() {
         <Route path="/checkOtp" element={<Check_OTP />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/allRepositories" element={<AllRepositories/>}/>
+        <Route path="/yourRepositories" element={<YourRepositories/>}/>
         <Route path="/changePassword" element={<ChangePassword />} />
-        <Route path="/blockDetails" element={<BlockDetails />} />
+        <Route path="/blockDetails/:index" element={<BlockDetails />} />
         <Route path="/transaction" element={<Transaction/>}/>
+        <Route path="/transactionsMade" element={<TransactionsMade/>}/>
+        
+        <Route path="/errorProfile" element={<Error_ProfilePage/>}/>
 
       </Routes>
     </BrowserRouter>

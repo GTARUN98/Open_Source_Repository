@@ -12,8 +12,7 @@ const SignUp = () => {
           lastName:"",
           email:"",
           password:"",
-          cpassword:"",
-          metaMaskId:"",
+          cpassword:""
         
       })
       let name,value   //here we require 2 things the the data written in input field and that data belongs to which input field
@@ -27,15 +26,15 @@ const SignUp = () => {
       const PostData = async(e) =>{
       
           e.preventDefault()  //so that the form does'nt get reloaded
-          const {firstName,lastName,email,password,cpassword,metaMaskId} = user     //this is called objectdestructuring every time we should no send like user.name so we can send like this alla t once
-          console.log(`${metaMaskId}`)
+          const {firstName,lastName,email,password,cpassword} = user     //this is called objectdestructuring every time we should no send like user.name so we can send like this alla t once
+          
           const res = await fetch("/register",{
               method:"POST",
               headers:{
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ //server does'nt undestand json dat so we have tostringify it
-                  firstName,lastName,email,password,cpassword,metaMaskId
+                  firstName,lastName,email,password,cpassword
               }),
           })
             window.alert("Registration successfull")
@@ -83,17 +82,7 @@ const SignUp = () => {
                   value={user.lastName}
                   />
               </Grid>
-              <Grid item xs={12}>
-                  <TextField
-                  name='metaMaskId'
-                  id='metaMaskId'
-                  required
-                  fullWidth
-                  label='Meta Mask Id'
-                  onChange={handleInputs}
-                  value={user.metaMaskId}
-                  />
-              </Grid>
+             
               <Grid item xs={12}>
                   <TextField
                   name='email'

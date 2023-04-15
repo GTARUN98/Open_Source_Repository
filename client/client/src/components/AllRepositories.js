@@ -12,8 +12,8 @@ const AllRepositories = () => {
     {/* <Typography style={{ textAlign: "center",alignItems:'center',justifyContent:"center",marginTop:"15px"}} >All Repositories</Typography> */}
     <Container maxWidth="s" style={{marginTop:'4',alignItems:'center'}}>
         <Box style={{marginTop:'15px'}}>
-        <Grid container spacing={2} style={{display:'flex'}}>
-            <Grid item xs={12}>
+        <Grid container spacing={2} style={{display:'flex',flexDirection:'row'}}>
+            <Grid item xs={2}>
                 <TextField
                 name='email'
                 id='email'
@@ -24,7 +24,7 @@ const AllRepositories = () => {
                 onChange={(e)=>{}}
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={2}>
                 <TextField
                 name='password'
                 id='password'
@@ -34,7 +34,7 @@ const AllRepositories = () => {
                 // value=
                 onChange={(e)=>{}}
                 /></Grid>
-            <Grid item xs={12}>
+            <Grid item xs={2}>
                 <TextField
                 name='password'
                 // id='password'
@@ -44,7 +44,7 @@ const AllRepositories = () => {
                 // value=
                 onChange={(e)=>{}}
                 /></Grid>
-            <Grid item xs={12}>
+            <Grid item xs={2}>
                 <TextField
                 name='password'
                 id=''
@@ -55,7 +55,7 @@ const AllRepositories = () => {
                 onChange={(e)=>{}}
                 />
                 </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={3}>
                 <TextField
                 name='password'
                 // id=''
@@ -68,7 +68,7 @@ const AllRepositories = () => {
                 </Grid>
             </Grid>
             <Grid container spacing={2} style={{marginTop:"2px"}}>
-            <Grid item xs={12} >
+            <Grid item xs={3} >
                 <TextField
                 name='email'
                 id='email'

@@ -23,10 +23,6 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    metaMaskId:{
-        type:String,
-        required:true
-    },
     image:{
         data:Buffer,
         contentType:String
@@ -76,7 +72,7 @@ userSchema.pre('save',async function(next) {//means before .save method its goin
 
 userSchema.methods.generateAuthToken = async function(){
     try{
-        console.log("SECRET_KEY is" )
+        console.log("SECRET_KEY is" ,process.env.REACT_APP_SECRET_KEY)
         let tokenGenerated =  jwt.sign({_id:this._id},process.env.REACT_APP_SECRET_KEY)//as id is unique
         this.tokens = this.tokens.concat({token:tokenGenerated})//adding in token object of tokens
         const isSaved = await this.save();

@@ -15,7 +15,7 @@ const fs = require("fs");
 // import * as IPFS from "ipfs-core";
 const { create } = require("ipfs-http-client");
 
-const { abi } = require("../web/build/contracts/Block.json");
+const { abi } = require("../SmartContract/build/contracts/Block.json");
 
 const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545"));
@@ -77,9 +77,9 @@ app
 
 // app.post("/register",(req,res)=>{
 app.post("/register", async (req, res) => {
-  const { firstName, lastName, email, password, cpassword, metaMaskId } =
+  const { firstName, lastName, email, password, cpassword } =
     req.body;
-  console.log(`${firstName},${metaMaskId}`);
+  console.log(`${firstName}`);
   if (!firstName || !lastName || !email || !password || !cpassword) {
     res.status(422).send("Please fill all the fields");
     console.log("Please fill all the fields");
@@ -99,7 +99,6 @@ app.post("/register", async (req, res) => {
       email,
       password,
       cpassword,
-      metaMaskId,
     });
 
     //here before saving hashing of the password is going to take place see in userShema using bcrypt
@@ -373,66 +372,65 @@ async function saveAndReturnFile(path) {
   console.log(`result is ${result}`);
   return result.path;
 }
-app.get("/getBlockDetails", async (req, res) => {
+app.post("/getBlockDetails", async (req, res) => {
   try {
+    const token = req.cookies.jwtoken;
+    console.log(`token`, token);
+    const verifyUser = jwt.verify(token, process.env.REACT_APP_SECRET_KEY);
+    const user = await Register.findOne({ _id: verifyUser._id });
+    console.log("user", user);
+
     const { index } = req.body;
-    const contract = new web3.eth.contract(abi, process.env.SEPOLIA_CONTRACT_ADDRESS);
-    const blockCount = contract.methods.getSize().call();
-    console.log(`block count is obtained as `, blockCount);
-    if (index < blockCount) {
-      const blockDetails = await contract.methods.getDetails(index).call();
-      console.log(`block details : ` + blockDetails);
-      const objectData = db.Register.find({
-        blockNo: { $elemMatch: { blockNo: index } },
-      }).pretty();
+    console.log(`index`, index);
 
-      let matchingIndex = 0;
-      const queryObjectData = objectData.demo742
-        .find({})
-        .forEach(function (doc) {
-          doc.blockNo.forEach(function (d) {
-            if (d.blockNo == index) return matchingIndex;
-            matchingIndex++;
-          });
-        });
-      console.log(queryObjectData);
+    // Search for the index in the blockNo array
+    const blockIndex = user.blockNo.findIndex((block) => block.blockNo === parseInt(index));
+    console.log(`blockIndex`, blockIndex);
 
-      const description =
-        objectData.blockDescription[matchingIndex].blockDescription;
-      console.log(`description is found to be `, description);
-      const data = {
-        component: blockDetails.component,
-        functionality: blockDetails.functionality,
-        operatingSystem: blockDetails.os,
-        language: blockDetails.language,
-        domain: blockDetails.domain,
-        date: blockDetails.date,
-        fileHash: blockDetails.fileHash,
-        description: description,
-      };
-
-      console.log(
-        ` the description of the block and user object is found to be : ${objectData}`
-      );
-      console.log(`dat json made as : `, data);
-      res.status(200).json(data);
-    } else {
-      console.log(
-        `sorry the block does'nt exist coz the blockCount is ${blockCount}`
-      );
-      res
-        .status(500)
-        .json(
-          `sorry the block does'nt exist coz the blockCount is ${blockCount}`
-        );
+    if (blockIndex === -1) {
+      // If index is not found, return an error
+      return res.status(404).json({ error: "Block not found" });
     }
+
+    // Get the corresponding block description
+    const blockDescription = user.blockDescription[blockIndex].blockDescription;
+    console.log(`blockDescription`, blockDescription);
+
+    // Return the block description
+    return res.status(200).json(blockDescription);
   } catch (error) {
-    console.log(`error occured to find the deatails of the block ${error}`);
-    res
-      .status(422)
-      .json(`error occured to find the deatails of the block ${error}`);
+    console.log(`error in getting getBlockDetails from server`, error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+app.post("/getUserBlockArray",async(req,res)=>{
+  try{
+    const token = req.cookies.jwtoken;
+    console.log(`token`,token)
+    const verifyUser = jwt.verify(token, process.env.REACT_APP_SECRET_KEY);
+    const user = await Register.findOne({ _id: verifyUser._id });
+    console.log("user",user)
+    const blockNoArray = user.blockNo.map((block) => block.blockNo);
+    console.log(`blockNoArray is `,blockNoArray)
+    res.status(200).json(blockNoArray);
+
+  }catch(error){
+    console.log(`error is getting the blockarray of the user`)
+    res.status(422).json(`error is getting the blockarry of the user`)
+  }
+})
+
+
+
+
+
+
+
+
+
+
 app.post("/addBlockDetails", async (req, res) => {
   try {
     const {
@@ -444,11 +442,15 @@ app.post("/addBlockDetails", async (req, res) => {
     // console.log(`block count is obtained as `, blockNo);
     const blockDescription = description;
     const token = req.cookies.jwtoken;
+    console.log(`token`,token)
     const verifyUser = jwt.verify(token, process.env.REACT_APP_SECRET_KEY);
     const user = await Register.findOne({ _id: verifyUser._id });
-    user.blockNo.push({ blockNo });
+    console.log("user",user)
+    const blockNoObj = { blockNo: blockNo }
+    user.blockNo.push( blockNoObj );
     await user.save();
-    const descRes = user.blockDescription.push({ blockDescription });
+    const blockDescObj = {blockDescription:blockDescription}
+    const descRes = user.blockDescription.push(blockDescObj);
     console.log(`descRes : `,descRes)
     await user.save();
 
@@ -461,3 +463,20 @@ app.post("/addBlockDetails", async (req, res) => {
     res.status(500).json(`error while making a addition to the db  and the smart contract ${error}`);
   }
 });
+
+
+
+app.post("/profile",async (req,res)=>{
+  try{
+    const token = req.cookies.jwtoken;
+    console.log(`token`,token)
+    const verifyUser = jwt.verify(token, process.env.REACT_APP_SECRET_KEY);
+    const user = await Register.findOne({ _id: verifyUser._id });
+    console.log("user",user)
+    res.status(200).json(user)
+
+  }catch(error){
+    console.log(`error in post api of profile api`,error)
+    res.status(500).json(`error in post api of profile api`)
+  }
+})

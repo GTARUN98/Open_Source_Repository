@@ -16,8 +16,6 @@ const HomePage = () => {
   const [operatingSystem, setOperatingSystem] = useState("");
   const [language, setLanguage] = useState("");
   const [functionality, setFunctionality] = useState("");
-  const [preCondition, setPreCondition] = useState("");
-  const [postCondition, setPostCondition] = useState("");
   const [fileName, setFileName] = useState("");
   const [description, setDescription] = useState("");
  

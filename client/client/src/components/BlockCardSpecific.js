@@ -5,7 +5,7 @@ const {abi} = require("../contracts_abi/Blockchain.json")
 const { ethers } = require( "ethers");
 
 require("dotenv").config({path: "D:/Tarun/Mern stack/Mini/client/client/.env"});
-function BlockCard() {
+function BlockCardSpecific() {
   // State variable to hold the block details
   const [blocks, setBlocks] = useState([]);
   const navigate = useNavigate();
@@ -22,21 +22,42 @@ function BlockCard() {
       abi,
       provider
     );
+    const example=1;
     console.log(`contract is `,contract)
-    let blockCount = await contract.getSize();
-    blockCount = blockCount.toString();
-    console.log(`blockCount is`,blockCount)
-    const blockDetails = [];
+    const resNodeJSBlockArray = await fetch("/getUserBlockArray", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          example,
+        }),
+      });
+    const blockDetails = await resNodeJSBlockArray.json();
+    console.log(`blockDetails is `,blockDetails)
     // Loop through each block and get its details
-    for (let i = 0; i < blockCount; i++) {
+    // for (let i = 0; i < blockCount; i++) {
+    //   const block = await contract.getDetails(i);
+    //   console.log(`block is`,block)
+    //   // Add the block details to the array
+    //   blockDetails.push(block);
+    //   console.log(`blockDetails is `,blockDetails)
+    // }
+    // Update the state variable with the processed block details
+    console.log(`blockDetails.length `,blockDetails.length)
+    const blockDetailsInfo = [];
+    for (let i = 0; i < blockDetails.length; i++) {
       const block = await contract.getDetails(i);
       console.log(`block is`,block)
       // Add the block details to the array
-      blockDetails.push(block);
+      blockDetailsInfo.push(block);
       console.log(`blockDetails is `,blockDetails)
     }
-    // Update the state variable with the processed block details
-    setBlocks(blockDetails);
+    console.log(`blockDetailsInfo`,blockDetailsInfo)
+
+
+
+    setBlocks(blockDetailsInfo);
     console.log(`setBlocks is `,setBlocks)
   }
 
@@ -82,4 +103,4 @@ function BlockCard() {
   );
 }
 
-export default BlockCard;
+export default BlockCardSpecific;
