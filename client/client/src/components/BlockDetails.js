@@ -20,19 +20,19 @@ function BlockDetails() {
     fileHash: "",
     transactionHash: "",
   });
-  async function bytes32ToString(bytes32) {
-    console.log("input bytes32 value:", bytes32);
-    const hash = await ethers.utils.hexlify(bytes32);
-    const str = await ethers.utils.hexDataSlice(hash, 0, 32);
-    console.log("hex string:", str);
-    if (str.length !== 64) {
-      throw new Error("Invalid bytes32 value");
-    }
-    const nullIndex = str.indexOf("\u0000");
-    const paddedStr = "0x" + str;
-    console.log("padded string:", paddedStr);
-    return nullIndex !== -1 ? ethers.utils.parseBytes32String(paddedStr.substring(0, nullIndex)) : ethers.utils.parseBytes32String(paddedStr);
-  }
+  // async function bytes32ToString(bytes32) {
+  //   console.log("input bytes32 value:", bytes32);
+  //   const hash = await ethers.utils.hexlify(bytes32);
+  //   const str = await ethers.utils.hexDataSlice(hash, 0, 32);
+  //   console.log("hex string:", str);
+  //   if (str.length !== 64) {
+  //     throw new Error("Invalid bytes32 value");
+  //   }
+  //   const nullIndex = str.indexOf("\u0000");
+  //   const paddedStr = "0x" + str;
+  //   console.log("padded string:", paddedStr);
+  //   return nullIndex !== -1 ? ethers.utils.parseBytes32String(paddedStr.substring(0, nullIndex)) : ethers.utils.parseBytes32String(paddedStr);
+  // }
 
   async function GetBlockDetails() {
     console.log(`GetBlockDetails is called`);
@@ -48,7 +48,7 @@ function BlockDetails() {
     });
     console.log(`res is`, resNodeJS);
     let description = "";
-    if (resNodeJS.status == 200) {
+    if (resNodeJS.status === 200) {
       resNodeJS.json().then((data) => {
         description = data;
       });
@@ -64,8 +64,8 @@ function BlockDetails() {
     console.log(`contract is `, contract);
     const res = await contract.getDetails(index);
     console.log(`res : `, res);
-    const originalFileHash = await bytes32ToString(res[6]);
-const originalTransactionHash = await bytes32ToString(res[7]);
+    const originalFileHash = res[6];
+const originalTransactionHash = res[7];
 console.log(`originalfileHash`,originalFileHash);
 console.log(`originalTransactionHash`,originalTransactionHash);
     await setBlockDetails({

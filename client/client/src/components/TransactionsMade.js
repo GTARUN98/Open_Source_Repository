@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Typography, Button } from "@material-ui/core";
+import NavBar from "./NavBar";
 const {abi} = require("../contracts_abi/Blockchain.json")
 const { ethers } = require( "ethers");
 require("dotenv").config({path: "D:/Tarun/Mern stack/Mini/client/client/.env"});
@@ -13,12 +14,7 @@ function TransactionsMade() {
   const [blocks, setBlocks] = useState([]);
   const navigate = useNavigate();
 
-  // const contractAddress = process.env.CONTRACT_ADDRESS;
-  async function bytes32ToString(bytes32) {
-    const hex = ethers.utils.hexlify(bytes32);
-  const str = await ethers.utils.hexToBytes(hex);
-  return str.toString('utf-8');
-  }
+  
 
   async function fetchBlockDetails() {
     await window.ethereum.send("eth_requestAccounts");
@@ -31,7 +27,7 @@ function TransactionsMade() {
       provider
     );
     console.log(`contract is `,contract)
-    console.log(`process.env is working`,process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS)
+    // console.log(`process.env is working`,process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS)
     const example =1;
     const resNodeJSBlockArray = await fetch("/getUserBlockArray", {
         method: "POST",
@@ -44,30 +40,19 @@ function TransactionsMade() {
       });
     const blockDetails = await resNodeJSBlockArray.json();
     console.log(`blockDetails is `,blockDetails)
-    // Loop through each block and get its details
-    // for (let i = 0; i < blockCount; i++) {
-    //   const block = await contract.getDetails(i);
-    //   console.log(`block is`,block)
-    //   // Add the block details to the array
-    //   blockDetails.push(block);
-    //   console.log(`blockDetails is `,blockDetails)
-    // }
-    // Update the state variable with the processed block details
-    console.log(`blockDetails.length `,blockDetails.length)
+    
     const blockDetailsInfo = [];
     for (let i = 0; i < blockDetails.length; i++) {
       let block = await contract.getDetails(i);
       console.log(`block is`,block)
       // Add the block details to the array
       const date = block[5]
-      console.log(`Transaction hash before as a string is `,block[7])
-      block = await bytes32ToString(block[7])
-      console.log(`Transaction hash after converting as a string is `,block)
+      const blockHash = block[7];
       const data = {
-        block,
+        blockHash,
         date
       }
-      console.log(`block hash in string is `,block)
+      console.log(`block hash in string is `,blockHash)
       blockDetailsInfo.push(data);
       console.log(`blockDetails is `,blockDetails)
     }
@@ -85,6 +70,7 @@ function TransactionsMade() {
 
   return (
     <div>
+      <NavBar/>
       {blocks.map((block, index) => (
         <Card
         key={index}
@@ -96,7 +82,7 @@ function TransactionsMade() {
         }}
       >
         <CardContent style={{ display: "flex" }}>
-          <Typography>Transaction Hash : {block.block}</Typography>
+          <Typography>Transaction Hash : {block.blockHash}</Typography>
           <Typography style={{ marginLeft: "auto" }}>
             Created on: {block.date}
           </Typography>
@@ -109,7 +95,7 @@ function TransactionsMade() {
             }}
             onClick={(e) => {
               e.preventDefault();
-              window.open(`https://sepolia.etherscan.io/tx/${block.block}`, '_blank');
+              window.open(`https://sepolia.etherscan.io/tx/${block.blockHash}`, '_blank');
             }}
           >
             See Transaction Details

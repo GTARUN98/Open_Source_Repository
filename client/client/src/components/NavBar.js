@@ -37,9 +37,9 @@ const NavBar  = () =>{
             <Box id="main" style={{marginLeft:'auto',display:'flex'}}>
             <div className="nav-item"><Typography   onClick={toNavigate} value='homePage' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>HomePage</Typography></div>
             <Typography   value='contact' onClick={toNavigate} style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>Contact Us</Typography>
-            <Typography   onClick={toNavigate} value='yourRepository' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>Your Repository</Typography>
-            <Typography   onClick={toNavigate} value='allRepository' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>All Repository</Typography>
-            <Typography   onClick={toNavigate} value='transactionHistory' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>Transaction History</Typography>
+            <Typography   onClick={toNavigate} value='yourRepositories' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>Your Repository</Typography>
+            <Typography   onClick={toNavigate} value='allRepositories' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>All Repository</Typography>
+            <Typography   onClick={toNavigate} value='transactionsMade' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>Transaction History</Typography>
             <Typography   onClick={toNavigate} value='profile' style={{marginRight:'15px',color:'white',cursor:'pointer',padding:'15px'}}>Profile</Typography>
 
             <Typography   onClick={userLogout} value='logout' style={{marginRight:'15px',color:'white',cursor:'pointer' ,padding:'15px'}}>Logout</Typography>

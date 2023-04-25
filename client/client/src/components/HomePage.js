@@ -5,10 +5,11 @@ import {
   Container,
   Typography,
   TextField,
-  Button
-} from "@mui/material";
+  Button,
+  Input
+} from "@material-ui/core";
+import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
-
 const HomePage = () => {
   // Initialize state variables for form fields
   const [component, setComponent] = useState("");
@@ -18,21 +19,44 @@ const HomePage = () => {
   const [functionality, setFunctionality] = useState("");
   const [fileName, setFileName] = useState("");
   const [description, setDescription] = useState("");
- 
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate()
   // Function to handle file upload
-  const handleFileUpload =  async (event) => {
-    console.log(event.target.files);
-    const file = event.target.files[0].name
-
-    console.log(`file name selected is ${file}`);
-    await setFileName(file)
- 
-    // console.log(`file name selected is ${fileName}`);
-  };
+  
+  
 useEffect(()=>{
   console.log(`file name is changed to ${fileName}`)
 },[fileName])
+
+async function handleUpload() {
+  try {
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append('profileImage', file);
+    console.log(`file is `,file)
+    setFileName(file.name)
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      // handle success
+    } else {
+      throw new Error('Upload failed');
+    }
+  } catch (error) {
+    // handle error
+  } finally {
+    setUploading(false);
+  }
+}
+
+function handleFileUpload(event) {
+  setFile(event.target.files[0]);
+}
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -95,6 +119,8 @@ useEffect(()=>{
   };
 
   return (
+    <>
+    <NavBar/>
     <Container
       maxWidth="xs"
       style={{
@@ -188,10 +214,21 @@ useEffect(()=>{
             />
           </Grid>
           <Grid item xs={12}>
-            <form action="/upload" method="POST" encType="multipart/form-data">
-              <input type="file" name="profileImage" onChange={handleFileUpload}/>
-              <button type="submit">Upload</button>
-            </form>
+          <div>
+      <Typography variant="h3">Upload File</Typography>
+      <input
+        type="file"
+        onChange={handleFileUpload}
+      />
+      <Button
+        variant="contained"
+        color="default"
+        onClick={handleUpload}
+        disabled={!file || uploading}
+      >
+        {uploading ? 'Uploading...' : 'Upload'}
+      </Button>
+    </div>
             
           </Grid>
         </Grid>
@@ -205,6 +242,7 @@ useEffect(()=>{
         </Button>
       </Box>
     </Container>
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
 const auth = require("./middleware/auth");
+const extractZip = require('extract-zip');
 const nodemailer = require("nodemailer"); //for sending emails
 const { existsSync } = require("fs"); //importing filesystems
 const fs = require("fs");
@@ -173,16 +174,19 @@ app.post("/changePassword", async (req, res) => {
     let password = req.body.password;
     const cPassword = req.body.confirmPassword;
     const email = req.body.email;
-
+    console.log(`email is `,email)
     if (password != cPassword) {
       console.log(`Both passwords aren't same please try again`);
     } else {
+      // Remove the pre-save middleware for password field before updating
       password = await bcrypt.hash(password, 12);
-      const changedSuccessfully = Register.updateOne(
+      const changedSuccessfully =   await Register.findOneAndUpdate(
         { email },
-        { password: password, cPassword: cPassword }
+        { password: password, cpassword: cPassword },
+        { runValidators: true, context: 'query', new: true }
       );
-      console.log(`${password},${cPassword}`);
+      console.log(`password is ${password}, cPasswrod is ${cPassword}`);
+      console.log(`changedSuccessfully is `,changedSuccessfully)
       if (changedSuccessfully) {
         console.log(`password changed successfully`);
         res.status(200).json(`password changed successfully`);
@@ -197,12 +201,15 @@ app.post("/changePassword", async (req, res) => {
     res.status(422).json(error);
   }
 });
+
 app.post("/checkOtp", async (req, res) => {
   try {
     const email = req.body.email;
     const isUserThere = await Register.findOne({ email: email });
-    if (isUserThere.OTP != "" && req.otp != "" && isUserThere.OTP === req.otp)
+    if (isUserThere.OTP != "" && req.otp != "" && isUserThere.OTP === req.otp){
       res.status(200).json(`otp is checked and success`);
+      
+  }
     else {
       isUserThere.OTP = "";
       res.status(422).json(`otp is wrong`);
@@ -232,7 +239,7 @@ app.post("/forgotPassword", async (req, res) => {
         from: process.env.REACT_APP_USEREMAIL,
         to: body_email,
         subject: "Forgot Password",
-        text: `Your OTP is ${OTP}.Please don't share this to anyone`,
+        text: `Your OTP is ${OTP}.Please don't share this to anyone.Its valid only for 5 minutes`,
       };
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
@@ -244,6 +251,10 @@ app.post("/forgotPassword", async (req, res) => {
           user.OTP = OTP;
         }
       });
+      // Clear OTP field after 5 minutes
+      setTimeout(async () => {
+        await Register.updateOne({ email: email }, { OTP: "" });
+      }, 300000);
       res.status(200).json("password sent to email succcessfully");
     }
   } catch (error) {
@@ -372,6 +383,42 @@ async function saveAndReturnFile(path) {
   console.log(`result is ${result}`);
   return result.path;
 }
+
+app.post("/authenticateAndSave", async (req, res) => {
+  try {
+    // Extract the fields from the request bodys
+    const { component, domain, operatingSystem, language, functionality, description } = req.body;
+    // Extract the folder data from the request
+    console.log(req.body)
+    const folder = req.body.folder;
+    console.log(`folder is `,folder)
+    // Save the folder in the uploads directory
+    const dir = `./uploads/${req.cookies.jwtoken}`;
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const folderPath = `${dir}/${folder[0].originalname}`;
+    await extractZip(folder[0].buffer, { dir: folderPath });
+
+    // Get the IPFS hash of the folder
+    const folderHash = await saveFolderAndReturnHash(folderPath);
+
+    // Return the IPFS hash and other data in the response
+    const response = {
+      folderHash,
+      component,
+      domain,
+      operatingSystem,
+      language,
+      functionality,
+      description,
+    };
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+});
 app.post("/getBlockDetails", async (req, res) => {
   try {
     const token = req.cookies.jwtoken;
@@ -412,7 +459,7 @@ app.post("/getUserBlockArray",async(req,res)=>{
     const verifyUser = jwt.verify(token, process.env.REACT_APP_SECRET_KEY);
     const user = await Register.findOne({ _id: verifyUser._id });
     console.log("user",user)
-    const blockNoArray = user.blockNo.map((block) => block.blockNo);
+    const blockNoArray = user.blockNo;
     console.log(`blockNoArray is `,blockNoArray)
     res.status(200).json(blockNoArray);
 

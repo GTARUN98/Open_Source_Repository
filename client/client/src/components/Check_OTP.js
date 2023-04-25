@@ -5,6 +5,7 @@ const Check_OTP = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   async function sendOtp() {
+    if(otp !== ""){
     let res = await fetch("/checkOtp", {
       method: "POST",
       headers: {
@@ -22,7 +23,7 @@ const Check_OTP = () => {
       console.log(`error in checking otp ${res.json}`);
     }
   }
-
+  }
   return (
     <Container
       maxWidth="xs"

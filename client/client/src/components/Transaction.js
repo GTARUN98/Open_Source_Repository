@@ -3,9 +3,10 @@ import { ethers } from "ethers";
 import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
 import { Box,Grid,Container,Typography,TextField,Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 const {abi} = require("../contracts_abi/Blockchain.json")
 require("dotenv").config({path: "D:/Tarun/Mern stack/Mini/client/client/.env"});
-let Web3 = require("web3")
+
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
   try {
     if (!window.ethereum)
@@ -30,11 +31,11 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
 };
 
 
-async function stringToBytes32(str) {
-  const hash = await ethers.utils.keccak256(str);
-  const bytes32 = await ethers.utils.arrayify(hash);
-  return bytes32;
-}
+// async function stringToBytes32(str) {
+//   const hash = await ethers.utils.keccak256(str);
+//   const bytes32 = await ethers.utils.arrayify(hash);
+//   return bytes32;
+// }
 export default function Transaction() {
   const [error, setError] = useState();
   const [txs, setTxs] = useState();
@@ -45,23 +46,25 @@ export default function Transaction() {
   const description = localStorage.getItem("description")
   const date = localStorage.getItem("date")
   const operatingSystem = localStorage.getItem("operatingSystem")
-  let fileHash = localStorage.getItem("fileHash")
+  const fileHash = localStorage.getItem("fileHash")
+  const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError();
-    fileHash =  await stringToBytes32( Buffer.from(fileHash, 'utf8'))
     console.log(`fileHash`,fileHash)
     
     const trans = await startPayment({
       setError,
       setTxs,
-      ether: "0.00000005", 
+      ether: process.env.REACT_APP_BLOCK_COST, 
       addr: process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS//reciever i.e the contract adderess
     });
     console.log(`tx.hash is `,trans)
     // const transactionHash = txs[0]//this wil be afterwards removed coz i just want to see wheather this api works
-    let transactionHash = await stringToBytes32(trans)//this wil be afterwards removed coz i just want to see wheather this api works
-    console.log('transaction hash in bytes32 is ',transactionHash)
+    // let transactionHash = await stringToBytes32(trans)//this wil be afterwards removed coz i just want to see wheather this api works
+    // const transactionHash = "0xf360c5dfcbe7f2b6b424755c0a8703696c41c5baa59fed3e5fe7bb303942a0a6"//this wil be afterwards removed coz i just want to see wheather this api works
+    const transactionHash = tx.hash//this wil be afterwards removed coz i just want to see wheather this api works
+    console.log('transaction hash  is ',transactionHash)
     // const transactionHash = localStorage.getItem("transactionHash")
     await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -74,7 +77,7 @@ export default function Transaction() {
       blockNo = blockNo.toString()
       
       
-      console.log(`file hash is bytes is`,fileHash);
+      console.log(`file hash  is`,fileHash);
       console.log("block no is",blockNo)
      
       const signer = provider.getSigner()
@@ -98,6 +101,7 @@ export default function Transaction() {
     })
     if(res.status === 200){
       console.log(`the description,blockNo are successfully added to database`)
+      navigate("/allRepositories")
     }
     else{
       console.log(`not able to add block description,no in the database`)

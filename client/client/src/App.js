@@ -17,7 +17,7 @@ import YourRepositories from "./components/YourRepositories";
 import BlockDetails from "./components/BlockDetails"
 import Transaction from "./components/Transaction"
 import TransactionsMade from "./components/TransactionsMade";
-
+import Profile from "./components/Profile"
 import Error_ProfilePage from "./components/Error_ProfilePage";
 function App() {
   return (
@@ -36,6 +36,7 @@ function App() {
         <Route path="/blockDetails/:index" element={<BlockDetails />} />
         <Route path="/transaction" element={<Transaction/>}/>
         <Route path="/transactionsMade" element={<TransactionsMade/>}/>
+        <Route path="/profile" element={<Profile/>}/>
         
         <Route path="/errorProfile" element={<Error_ProfilePage/>}/>
 
