@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "./NavBar";
 import { useParams } from "react-router-dom";
+
+import { Card, CardContent, Typography, Button } from "@material-ui/core";
 const { abi } = require("../contracts_abi/Blockchain.json");
 const { ethers } = require("ethers");
 const Web3 = require("web3");
@@ -87,27 +89,80 @@ console.log(`originalTransactionHash`,originalTransactionHash);
   }, [index]);
 
   return (
-    <div>
-      <NavBar />
+    <>
+    <NavBar />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f0f0f0",
+        padding: "16px",
+      }}
+    >
       {blockDetails.component ? (
-        <div>
-          <h1>{blockDetails.component}</h1>
-          <div>
-            <p>Domain : {blockDetails.domain}</p>
-            <p>Description : {blockDetails.description}</p>
-            <p>Created On : {blockDetails.date}</p>
-            <p>Functionality : {blockDetails.functionality}</p>
-            <p>Operating System : {blockDetails.os}</p>
-            <p>Language : {blockDetails.language}</p>
-            <p>fileHash: {blockDetails.fileHash}</p>
-            <p>transactionHash: {blockDetails.transactionHash}</p>
-            <p>You can View the code of this component at : <a>https://ipfs.io/ipfs/{blockDetails.fileHash}</a></p>
+        <div
+          style={{
+            maxWidth: "800px",
+            backgroundColor: "#ffffff",
+            borderRadius: "10px",
+            padding: "16px",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="h4" style={{ marginBottom: "16px" }}>
+            {blockDetails.component}
+          </Typography>
+          <div style={{ marginBottom: "16px" }}>
+            <Typography style={{padding:"5px"}}>
+              Domain : {blockDetails.domain}
+            </Typography>
+            <Typography  style={{padding:"5px"}}>
+              Description : {blockDetails.description}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              Created On : {blockDetails.date}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              Functionality : {blockDetails.functionality}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              Operating System : {blockDetails.os}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              Language : {blockDetails.language}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              fileHash: {blockDetails.fileHash}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              transactionHash: {blockDetails.transactionHash}
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              You can View the code of this component at :{" "}
+              <a
+                href={`https://ipfs.io/ipfs/${blockDetails.fileHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration: "none",
+                  color: "#3f51b5",
+                  marginLeft: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                https://ipfs.io/ipfs/{blockDetails.fileHash}
+              </a>
+            </Typography>
           </div>
         </div>
       ) : (
         <p>Loading...</p>
       )}
     </div>
+  </>
   );
 }
 

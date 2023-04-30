@@ -152,7 +152,7 @@ export default function AllRepositories() {
   return (
     <>
      <NavBar/>
-    <Container maxWidth="sm" style={{ marginTop: '4', alignItems: 'center' }}>
+    <Container maxWidth="sm" style={{ marginTop: '15px',marginBottom:"15px", alignItems: 'center' }}>
       <Grid container spacing={2} style={{ marginBottom: '16px' }}>
         <Grid item xs={12} sm={6}>
           <TextField

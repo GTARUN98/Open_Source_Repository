@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
-import { Box,Grid,Container,Typography,TextField,Button } from "@mui/material";
+import { Box,Grid,Container,Typography,TextField,Button ,Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const {abi} = require("../contracts_abi/Blockchain.json")
 require("dotenv").config({path: "D:/Tarun/Mern stack/Mini/client/client/.env"});
@@ -112,35 +112,92 @@ export default function Transaction() {
 
   return (
     <>
-    <Box style={{display:'flex',flexDirection:'row'}}>
-    <Container maxWidth="xs" style={{marginTop:'4',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100vh'}}>
-    <Typography variant="h4" component="h2" style={{marginBottom:"10px"}}>Block Details</Typography>
-    <Typography>Component Of The Block To Be Made : {component}</Typography>
-    <Typography>Description Of The Block To Be Made : {description}</Typography>
-    <Typography>OperatingSystem Of The Block To Be Made : {operatingSystem}</Typography>
-    <Typography>Domain Of The Block To Be Made : {domain}</Typography>
-    <Typography>Language Of The Block To Be Made : {language}</Typography>
-    <Typography>Date Of The Block To Be Made : {date}</Typography>
-    <Typography>functionality Of The Block To Be Made : {functionality}</Typography>
-    <Typography>Your uploaded file can be found in  : https://ipfs.io/ipfs/{fileHash}</Typography>
-    </Container>
-    <Container maxWidth="xs" style={{marginTop:'4',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100vh'}}>
-    <Typography variant="h4" component="h2" style={{marginBottom:"10px"}}>Make Payment</Typography>
-    <Typography>To make a block and contribute to the opensource you need to make a transaction in ethers to make yourself a block </Typography>
-    <Typography>1. You need to have an metamask wallet in your browser with sufficint amount of ethers</Typography>
-    <Typography>2. Use Test Ethers as it is just a testing website(dont't use mainnet wallet)</Typography>
-    <Typography>3. A Payment of {process.env.REACT_APP_BLOCK_COST} + gas price is required to make a block</Typography>
-    <Typography>4. !!Gas prices may change time to time so we are'nt responsible</Typography>
-    <Button variant="contained"
-          fullWidth
-          onClick={handleSubmit}
-          style={{marginTop:"15px",marginBottom:"3px"}}>Make Payment</Button>
-     {/*<ErrorMessage message={error} />
-      <TxList txs={txs} />*/}
-    </Container>
-    </Box>
-    
-    </>
+    <Grid container spacing={3}>
+    <Grid item xs={12} sm={6} container justify="center" alignItems="center">
+  <Container maxWidth="m" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', height: "170vh", width: "100vw" }}>
+    <Typography variant="h4" component="h2" style={{ marginBottom: "5px" }}>Block Details</Typography>
+    <TableContainer style={{ width: "100%", height: "auto" }}>
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Component Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{component}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Description Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{description}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Operating System Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{operatingSystem}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Domain Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{domain}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Language Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{language}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Date Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{date}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Functionality Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{functionality}</Typography></TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">File Hash</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}>
+              <Typography variant="subtitle1">
+                Your uploaded file can be found in :
+                <a href={`https://ipfs.io/ipfs/${fileHash}`} style={{ textDecoration: 'none', color: 'blue', paddingLeft: '5px' }}>
+                  https://ipfs.io/ipfs/{fileHash}
+                </a>
+              </Typography>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </Container>
+</Grid>
+      <Grid item xs={12} sm={6}>
+        <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '20px' }}>
+          <Typography variant="h4" component="h2" style={{ marginBottom: "10px" }}>Make Payment</Typography>
+          <Typography>To make a block and contribute to the opensource you need to make a transaction in ethers to make yourself a block </Typography>
+          <TableContainer style={{ marginTop: '20px' }}>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    <Typography>1. You need to have an metamask wallet in your browser with sufficient amount of ethers</Typography>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <Typography>2. Use Test Ethers as it is just a testing website (don't use mainnet wallet)</Typography>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <Typography>3. A Payment of {process.env.REACT_APP_BLOCK_COST} + gas price is required to make a block</Typography>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <Typography>4. Gas prices may change time to time so we aren't responsible</Typography>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Button variant="contained" fullWidth onClick={handleSubmit} style={{ marginTop: "15px", marginBottom: "3px" }}>Make Payment</Button>
+        </Container>
+      </Grid>
+    </Grid>
+  </>
   )
 }
 

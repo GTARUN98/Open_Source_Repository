@@ -122,126 +122,130 @@ function handleFileUpload(event) {
     <>
     <NavBar/>
     <Container
-      maxWidth="xs"
-      style={{
-        marginTop: "4",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-      }}
-    >
-      <Typography>Make A Block</Typography>
-      <Box style={{ marginTop: "15px" }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="component"
-              id="component"
-              required
-              fullWidth
-              label="Component"
-              onChange={(e) => {
-                setComponent(e.target.value);
-              }}
-              value={component}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="domain"
-              id="domain"
-              required
-              fullWidth
-              label="Domain"
-              onChange={(e) => {
-                setDomain(e.target.value);
-              }}
-              value={domain}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              name="operatingSystem"
-              id="operatingSystem"
-              required
-              fullWidth
-              label="Operting System"
-              onChange={(e) => {
-                setOperatingSystem(e.target.value);
-              }}
-              value={operatingSystem}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              name="language"
-              id="language"
-              required
-              fullWidth
-              label="language"
-              onChange={(e) => {
-                setLanguage(e.target.value);
-              }}
-              value={language}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              name="functionality"
-              id="functionality"
-              required
-              fullWidth
-              label="functionality"
-              onChange={(e) => {
-                setFunctionality(e.target.value);
-              }}
-              value={functionality}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              name="description"
-              id="description"
-              required
-              fullWidth
-              label="description"
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-              value={description}
-            />
-          </Grid>
-          <Grid item xs={12}>
-          <div>
-      <Typography variant="h3">Upload File</Typography>
-      <input
-        type="file"
-        onChange={handleFileUpload}
-      />
-      <Button
-        variant="contained"
-        color="default"
-        onClick={handleUpload}
-        disabled={!file || uploading}
-      >
-        {uploading ? 'Uploading...' : 'Upload'}
-      </Button>
-    </div>
-            
-          </Grid>
-        </Grid>
-        <Button
-          variant="contained"
+  maxWidth="xs"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "90vh",
+  }}
+>
+  <Typography>Make A Block</Typography>
+  <Box style={{ marginTop: "15px" }}>
+    <Grid container spacing={2}>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          name="component"
+          id="component"
+          required
+          variant="outlined"
           fullWidth
-          onClick={handleSubmit}
-          style={{ marginTop: "15px", marginBottom: "3px" }}
-        >
-          Make A Block
-        </Button>
-      </Box>
-    </Container>
+          label="Component"
+          onChange={(e) => {
+            setComponent(e.target.value);
+          }}
+          value={component}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          name="domain"
+          id="domain"
+          required
+          variant="outlined"
+          fullWidth
+          label="Domain"
+          onChange={(e) => {
+            setDomain(e.target.value);
+          }}
+          value={domain}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          name="operatingSystem"
+          id="operatingSystem"
+          required
+          variant="outlined"
+          fullWidth
+          label="Operating System"
+          onChange={(e) => {
+            setOperatingSystem(e.target.value);
+          }}
+          value={operatingSystem}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          name="language"
+          id="language"
+          required
+          variant="outlined"
+          fullWidth
+          label="Language"
+          onChange={(e) => {
+            setLanguage(e.target.value);
+          }}
+          value={language}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          name="functionality"
+          id="functionality"
+          required
+          variant="outlined"
+          fullWidth
+          label="Functionality"
+          onChange={(e) => {
+            setFunctionality(e.target.value);
+          }}
+          value={functionality}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          name="description"
+          id="description"
+          required
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={3} // set number of rows to 3
+          label="Description"
+          onChange={(e) => {
+            setDescription(e.target.value);
+          }}
+          value={description}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <div>
+          <Typography variant="h6">Upload File</Typography>
+          <input type="file" onChange={handleFileUpload} />
+          <Button
+            variant="contained"
+            color="default"
+            onClick={handleUpload}
+            disabled={!file || uploading}
+          >
+            {uploading ? "Uploading..." : "Upload"}
+          </Button>
+        </div>
+      </Grid>
+    </Grid>
+    <Button
+      variant="contained"
+      fullWidth
+      onClick={handleSubmit}
+      style={{ marginTop: "15px", marginBottom: "3px" }}
+    >
+      Make A Block
+    </Button>
+  </Box>
+</Container>
+
     </>
   );
 };

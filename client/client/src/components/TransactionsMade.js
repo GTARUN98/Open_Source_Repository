@@ -78,24 +78,45 @@ function TransactionsMade() {
           display: "flex",
           flexDirection: "row",
           margin: "5px",
-          padding: "5px"
+          padding: "5px",
+          borderRadius: "10px",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <CardContent style={{ display: "flex" }}>
-          <Typography>Transaction Hash : {block.blockHash}</Typography>
-          <Typography style={{ marginLeft: "auto" }}>
+        <CardContent style={{ display: "flex", flexDirection: "column", flex: "1" }}>
+          <Typography
+            style={{
+              overflowWrap: "break-word",
+              wordBreak: "break-all",
+              marginBottom: "8px",
+            }}
+          >
+            Transaction Hash : {block.blockHash}
+          </Typography>
+          <Typography
+            style={{
+              alignSelf: "flex-end",
+              fontSize: "12px",
+              color: "#777",
+            }}
+          >
             Created on: {block.date}
           </Typography>
         </CardContent>
-        <CardContent>
+        <CardContent
+          style={{
+            display: "flex",
+            justifyContent: "flex-end", // Align the button to the right end
+            alignItems: "flex-end", // Align the button to the bottom
+            paddingRight: "16px", // Added right padding for spacing
+          }}
+        >
           <Button
-            style={{
-              backgroundColor: "#3f51b5",
-              color: "white"
-            }}
+            variant="contained"
+            color="primary"
             onClick={(e) => {
               e.preventDefault();
-              window.open(`https://sepolia.etherscan.io/tx/${block.blockHash}`, '_blank');
+              window.open(`https://sepolia.etherscan.io/tx/${block.blockHash}`, "_blank");
             }}
           >
             See Transaction Details
