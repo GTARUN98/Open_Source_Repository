@@ -1,4 +1,11 @@
+node_modules
 .env
-node_modules/
-*/node_modules/
-# /contracts
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
+

@@ -22,7 +22,7 @@ export default function AllRepositories() {
     await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(
-      process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS,
+      process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT,
       abi,
       provider
     );
@@ -210,9 +210,13 @@ export default function AllRepositories() {
     <BlockCard key={repo.id} repo={repo} matchingPercentage={repo.matchingPercentage} />
   ))
 ) : (
-  repositories.map((repo) => (
-    <BlockCard key={repo.id} repo={repo} matchingPercentage={0} />
-  ))
+  repositories.length > 0 ? (
+    repositories.map((repo) => (
+      <BlockCard key={repo.id} repo={repo} matchingPercentage={0} />
+    ))
+  ) : (
+    <div style={{ textAlign: "center"}}>Loading...</div>
+  )
 )}
     
     </>

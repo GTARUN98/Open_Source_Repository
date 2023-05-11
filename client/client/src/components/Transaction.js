@@ -12,6 +12,8 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
     if (!window.ethereum)
       throw new Error("No crypto wallet found. Please install it.");
     console.log("start payment is called")
+    console.log(`ether is `,ether);
+    console.log(`addr is `,addr);
     await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -52,21 +54,35 @@ export default function Transaction() {
     e.preventDefault();
     setError();
     console.log(`fileHash`,fileHash)
-    
+    console.log(`reciever address is `,process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT)
+    console.log(`blockCost is `,process.env.REACT_APP_BLOCK_COST)
+    await window.ethereum.send("eth_requestAccounts");
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+      console.log(provider)
+      // const provider = new ethers.providers.AlchemyProvider("ZDD-ekxQior2CBbHU9Oyym1yKDE85aSc")
+      console.log(`abi is ${abi}`)
+      const contract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT,abi,provider)
+      console.log(`contract is `,contract)
+      let blockNo = await contract.getSize();
+      blockNo = blockNo.toString()
+      
+      
+      console.log(`file hash  is`,fileHash);
+      console.log("block no is",blockNo)
     const trans = await startPayment({
       setError,
       setTxs,
       ether: process.env.REACT_APP_BLOCK_COST, 
-      addr: process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS//reciever i.e the contract adderess
+      addr: process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_PAYMENT//reciever i.e the contract adderess
     });
     console.log(`tx.hash is `,trans)
     // const transactionHash = txs[0]//this wil be afterwards removed coz i just want to see wheather this api works
     // let transactionHash = await stringToBytes32(trans)//this wil be afterwards removed coz i just want to see wheather this api works
     // const transactionHash = "0xf360c5dfcbe7f2b6b424755c0a8703696c41c5baa59fed3e5fe7bb303942a0a6"//this wil be afterwards removed coz i just want to see wheather this api works
-    const transactionHash = tx.hash//this wil be afterwards removed coz i just want to see wheather this api works
+    const transactionHash = trans//this wil be afterwards removed coz i just want to see wheather this api works
     console.log('transaction hash  is ',transactionHash)
     // const transactionHash = localStorage.getItem("transactionHash")
-    await window.ethereum.send("eth_requestAccounts");
+    /*await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum)
       console.log(provider)
       // const provider = new ethers.providers.AlchemyProvider("ZDD-ekxQior2CBbHU9Oyym1yKDE85aSc")
@@ -78,13 +94,13 @@ export default function Transaction() {
       
       
       console.log(`file hash  is`,fileHash);
-      console.log("block no is",blockNo)
+      console.log("block no is",blockNo)*/
      
       const signer = provider.getSigner()
       console.log(`signer is `,signer)
       // console.log(functionality,operatingSystem,language,domain,component,date,fileHash,transactionHash)
 
-      const myContract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS,abi,signer);
+      const myContract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT,abi,signer);
       console.log(`myContract is`,myContract)
       const tx = await myContract.makeBlock(functionality,operatingSystem,language,domain,component,date,fileHash,transactionHash);
   
@@ -115,36 +131,36 @@ export default function Transaction() {
     <Grid container spacing={3}>
     <Grid item xs={12} sm={6} container justify="center" alignItems="center">
   <Container maxWidth="m" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', height: "170vh", width: "100vw" }}>
-    <Typography variant="h4" component="h2" style={{ marginBottom: "5px" }}>Block Details</Typography>
+    <Typography variant="h4" component="h2" style={{ marginBottom: "5px" }}>Code Details</Typography>
     <TableContainer style={{ width: "100%", height: "auto" }}>
       <Table>
         <TableBody>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Component Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Component Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{component}</Typography></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Description Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Description Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{description}</Typography></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Operating System Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Operating System Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{operatingSystem}</Typography></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Domain Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Domain Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{domain}</Typography></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Language Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Language Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{language}</Typography></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Date Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Date Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{date}</Typography></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Functionality Of The Block To Be Made</Typography></TableCell>
+            <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">Functionality Of The code going to be added</Typography></TableCell>
             <TableCell style={{ width: "50%" }}><Typography variant="subtitle1">{functionality}</Typography></TableCell>
           </TableRow>
           <TableRow>
@@ -166,7 +182,8 @@ export default function Transaction() {
       <Grid item xs={12} sm={6}>
         <Container maxWidth="sm" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '20px' }}>
           <Typography variant="h4" component="h2" style={{ marginBottom: "10px" }}>Make Payment</Typography>
-          <Typography>To make a block and contribute to the opensource you need to make a transaction in ethers to make yourself a block </Typography>
+          <Typography>
+          To contribute to the open-source project, you need to make a transaction in Ether to make yourself a contributor. </Typography>
           <TableContainer style={{ marginTop: '20px' }}>
             <Table>
               <TableBody>
@@ -177,12 +194,12 @@ export default function Transaction() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <Typography>2. Use Test Ethers as it is just a testing website (don't use mainnet wallet)</Typography>
+                    <Typography>2. Use Sepolia Test Ethers as it is just a testing website (don't use mainnet wallet)</Typography>
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <Typography>3. A Payment of {process.env.REACT_APP_BLOCK_COST} + gas price is required to make a block</Typography>
+                    <Typography>3. A Payment of {process.env.REACT_APP_BLOCK_COST} + gas price is required to add this code in the memory of the smart contract</Typography>
                   </TableCell>
                 </TableRow>
                 <TableRow>

@@ -16,11 +16,11 @@ const fs = require("fs");
 // import * as IPFS from "ipfs-core";
 const { create } = require("ipfs-http-client");
 
-const { abi } = require("../SmartContract/build/contracts/Block.json");
+// const { abi } = require("../SmartContract/build/contracts/Block.json");
 
-const Web3 = require("web3");
-const web3 = new Web3(new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545"));
-let contract = new web3.eth.Contract(abi, process.env.SEPOLIA_CONTRACT_ADDRESS);
+// const Web3 = require("web3");
+// const web3 = new Web3(new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545"));
+// let contract = new web3.eth.Contract(abi, process.env.SEPOLIA_CONTRACT_ADDRESS);
 
 // create an IPFS client instance
 
@@ -136,8 +136,7 @@ app.post("/login", async (req, res) => {
 
         const token = await isUserExist.generateAuthToken(); //we are now generating auth token that is in userSchema
         //console.log("token",token)
-        res
-          .cookie("jwtoken", token, {
+        res.cookie("jwtoken", token, {
             maxAge: 2592000000, //token is active for 2592000000 millisec ie 30 days after that he will be logged out expires is not working please take a note
             httpOnly: true,
           })
@@ -205,12 +204,17 @@ app.post("/changePassword", async (req, res) => {
 app.post("/checkOtp", async (req, res) => {
   try {
     const email = req.body.email;
+    const otp = req.body.otp;
+    console.log(`otp at the user sent is ${otp}` )
     const isUserThere = await Register.findOne({ email: email });
-    if (isUserThere.OTP != "" && req.otp != "" && isUserThere.OTP === req.otp){
+    console.log("the otp at server is ",isUserThere.otp)
+    if (isUserThere.otp != "" && req.otp != "" && isUserThere.otp === otp){
+      console.log(`otp is same`)
       res.status(200).json(`otp is checked and success`);
       
   }
     else {
+      console.log("otp does'nt match")
       isUserThere.OTP = "";
       res.status(422).json(`otp is wrong`);
     }
@@ -239,22 +243,26 @@ app.post("/forgotPassword", async (req, res) => {
         from: process.env.REACT_APP_USEREMAIL,
         to: body_email,
         subject: "Forgot Password",
-        text: `Your OTP is ${OTP}.Please don't share this to anyone.Its valid only for 5 minutes`,
+        text: `Your OTP is ${OTP}.Please don't share this to anyone.Its valid only for 2 minutes`,
       };
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
+          
           res.status(422).json(`error in sending the mail`);
           console.log(error);
         } else {
           console.log("Email is sent", info.response);
-          const user = Register.findOne({ email: body_email });
-          user.OTP = OTP;
+          
         }
       });
-      // Clear OTP field after 5 minutes
+      // Clear OTP field after 2 minutes
+      await Register.updateOne({ email: body_email }, { otp : OTP });
+      console.log("otp is set with ",isUserThere.otp)
       setTimeout(async () => {
-        await Register.updateOne({ email: email }, { OTP: "" });
-      }, 300000);
+        await Register.updateOne({ email: body_email }, { otp: "" });
+        console.log(`otp is cleared`)
+      // }, 300000);
+      }, 100000);
       res.status(200).json("password sent to email succcessfully");
     }
   } catch (error) {
@@ -421,30 +429,34 @@ app.post("/authenticateAndSave", async (req, res) => {
 });
 app.post("/getBlockDetails", async (req, res) => {
   try {
-    const token = req.cookies.jwtoken;
-    console.log(`token`, token);
-    const verifyUser = jwt.verify(token, process.env.REACT_APP_SECRET_KEY);
-    const user = await Register.findOne({ _id: verifyUser._id });
-    console.log("user", user);
-
     const { index } = req.body;
     console.log(`index`, index);
 
-    // Search for the index in the blockNo array
-    const blockIndex = user.blockNo.findIndex((block) => block.blockNo === parseInt(index));
-    console.log(`blockIndex`, blockIndex);
+    // Find all users in the database
+    const users = await Register.find();
 
-    if (blockIndex === -1) {
-      // If index is not found, return an error
+    // Traverse through every user in the database to find the requested blockNo
+    let blockDescription = null;
+    let name = null;
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      const blockIndex = user.blockNo.findIndex((block) => block.blockNo === parseInt(index));
+      if (blockIndex !== -1) {
+        // If index is found, get the corresponding block description and break the loop
+        blockDescription = user.blockDescription[blockIndex].blockDescription;
+        name = user.lastName + " " + user.firstName;
+        break;
+      }
+    }
+
+    if (!blockDescription) {
+      // If index is not found in any user's blockNo array, return an error
       return res.status(404).json({ error: "Block not found" });
     }
 
-    // Get the corresponding block description
-    const blockDescription = user.blockDescription[blockIndex].blockDescription;
-    console.log(`blockDescription`, blockDescription);
-
     // Return the block description
-    return res.status(200).json(blockDescription);
+    console.log(`the name of the person who made the block is`,name)
+    return res.status(200).json({ blockDescription: blockDescription, name: name });
   } catch (error) {
     console.log(`error in getting getBlockDetails from server`, error);
     return res.status(500).json({ error: "Internal server error" });
@@ -527,3 +539,4 @@ app.post("/profile",async (req,res)=>{
     res.status(500).json(`error in post api of profile api`)
   }
 })
+

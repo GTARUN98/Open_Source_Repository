@@ -22,12 +22,12 @@ function TransactionsMade() {
     console.log(provider);
     console.log(`abi is ${abi}`);
     const contract = new ethers.Contract(
-      process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS,
+      process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT,
       abi,
       provider
     );
     console.log(`contract is `,contract)
-    // console.log(`process.env is working`,process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS)
+    // console.log(`process.env is working`,process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT)
     const example =1;
     const resNodeJSBlockArray = await fetch("/getUserBlockArray", {
         method: "POST",
@@ -43,7 +43,7 @@ function TransactionsMade() {
     
     const blockDetailsInfo = [];
     for (let i = 0; i < blockDetails.length; i++) {
-      let block = await contract.getDetails(i);
+      try{let block = await contract.getDetails(i);
       console.log(`block is`,block)
       // Add the block details to the array
       const date = block[5]
@@ -54,7 +54,11 @@ function TransactionsMade() {
       }
       console.log(`block hash in string is `,blockHash)
       blockDetailsInfo.push(data);
-      console.log(`blockDetails is `,blockDetails)
+      console.log(`blockDetails is `,blockDetails)}
+      catch(error){
+        console.log(`Error fetching block details for block ${i}: `, error);
+        break; 
+      }
     }
     console.log(`blockDetailsInfo`,blockDetailsInfo)
 
@@ -71,7 +75,7 @@ function TransactionsMade() {
   return (
     <div>
       <NavBar/>
-      {blocks.map((block, index) => (
+      { blocks.length > 0 ? blocks.map((block, index) => (
         <Card
         key={index}
         style={{
@@ -95,6 +99,7 @@ function TransactionsMade() {
           </Typography>
           <Typography
             style={{
+              pointer:"cursor",
               alignSelf: "flex-end",
               fontSize: "12px",
               color: "#777",
@@ -114,6 +119,12 @@ function TransactionsMade() {
           <Button
             variant="contained"
             color="primary"
+            style={{
+              backgroundColor: "#3f51b5",
+              color: "white",
+              padding: "8px 16px",
+              marginLeft: "auto",
+            }}
             onClick={(e) => {
               e.preventDefault();
               window.open(`https://sepolia.etherscan.io/tx/${block.blockHash}`, "_blank");
@@ -123,7 +134,12 @@ function TransactionsMade() {
           </Button>
         </CardContent>
       </Card>
-      ))}
+      )):
+      (
+        <p style={{ textAlign: "center",justifyContent:"center"}}>Loading...</p>
+      )
+    
+    }
     </div>
   );
 }

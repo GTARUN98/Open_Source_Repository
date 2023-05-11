@@ -5,6 +5,7 @@ const Check_OTP = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   async function sendOtp() {
+    console.log(`send otp is called with otp `,otp)
     if(otp !== ""){
     let res = await fetch("/checkOtp", {
       method: "POST",

@@ -22,7 +22,7 @@ export default function YourRepositories() {
     await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(
-      process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS,
+      process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT,
       abi,
       provider
     );
@@ -48,13 +48,13 @@ export default function YourRepositories() {
     const blockDetailsArray = [];
     console.log(`index is `,blockDetails[0].blockNo)
     for (let i = 0; i < blockCount; i++) {
-      const blockNo = blockDetails[i].blockNo;
+      try{const blockNo = blockDetails[i].blockNo;
         console.log("blockDetails[i] bloxkNo is ",blockNo)
       const details = await contract.getDetails(blockNo);
       console.log(`details are`,details)
       const res = details;
       const blockDetailsi = {
-        id: i,
+        id: blockNo,
         functionality: res[0],
         domain: res[3],
         os: res[1],
@@ -62,12 +62,16 @@ export default function YourRepositories() {
         date: res[5],
         component: res[4]
       };
-      blockDetailsArray.push(blockDetailsi);
+      blockDetailsArray.push(blockDetailsi);}
+      catch(error){
+        console.log(`Error fetching block details for block ${i}: `, error);
+        break; 
+      }
     }
 
     setRepositories(blockDetailsArray);
-    console.log(`setRepositories are `,repositories)
     setFilteredRepositories(blockDetailsArray);
+    console.log(`setRepositories are `,repositories)
   }
 
   useEffect(() => {
@@ -227,10 +231,13 @@ export default function YourRepositories() {
     <BlockCard key={repo.id} repo={repo} matchingPercentage={repo.matchingPercentage} />
   ))
 ) : (
-  repositories.map((blockDetails) => (
-    
-    <BlockCard key={blockDetails.id} repo={blockDetails} matchingPercentage={0} />
-  ))
+  repositories.length > 0 ? (
+    repositories.map((repo) => (
+      <BlockCard key={repo.id} repo={repo} matchingPercentage={0} />
+    ))
+  ) : (
+    <div style={{ textAlign: "center"}}>Loading...</div>
+  )
 )}
     
     </>

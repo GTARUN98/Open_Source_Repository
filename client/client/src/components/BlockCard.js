@@ -36,7 +36,9 @@ console.log(`repos is `,repo)
         }}
         onClick={(e) => {
           e.preventDefault();
-          navigate(`/blockDetails/${repo.id}`);
+          // navigate(`/blockDetails/${repo.id}`);
+          window.open(`http://localhost:3001/blockDetails/${repo.id}`, "_blank");
+          
         }}
       >
         See Details

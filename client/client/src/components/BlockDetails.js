@@ -50,19 +50,22 @@ function BlockDetails() {
     });
     console.log(`res is`, resNodeJS);
     let description = "";
+    let namei = "";
     if (resNodeJS.status === 200) {
       resNodeJS.json().then((data) => {
-        description = data;
+        description = data.blockDescription;
+        namei = data.name
       });
     } else {
       console.log(`error occured in retriving the description from the database`);
     }
     console.log(`description is `, description);
+    console.log(`name of the creator is `,namei)
     await window.ethereum.send("eth_requestAccounts");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log(provider);
     console.log(`abi is ${abi}`);
-    const contract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS, abi, provider);
+    const contract = new ethers.Contract(process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS_INTERACT, abi, provider);
     console.log(`contract is `, contract);
     const res = await contract.getDetails(index);
     console.log(`res : `, res);
@@ -78,6 +81,7 @@ console.log(`originalTransactionHash`,originalTransactionHash);
       date: res[5],
       component: res[4],
       description: description,
+      name:namei,
       fileHash: originalFileHash ,
       transactionHash: originalTransactionHash,
     });
@@ -155,6 +159,9 @@ console.log(`originalTransactionHash`,originalTransactionHash);
               >
                 https://ipfs.io/ipfs/{blockDetails.fileHash}
               </a>
+            </Typography>
+            <Typography style={{padding:"5px"}}>
+              Created By : {blockDetails.name}
             </Typography>
           </div>
         </div>
